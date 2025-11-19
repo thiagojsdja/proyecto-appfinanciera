@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cliente.nombre }} - Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body style="background-color: #f0f2f5;">
+
+<div class="container py-5">
+    <!-- Navegación -->
+    <a href="/clientes/" class="text-decoration-none text-muted mb-3 d-inline-block">
+        <i class="bi bi-arrow-left"></i> Volver a la lista
+    </a>
+
+    <div class="row">
+        <!-- Columna Izquierda: Datos Personales -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center pt-5 pb-4">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                        {{ cliente.nombre|slice:":1" }}
+                    </div>
+                    <h4 class="fw-bold">{{ cliente.nombre }}</h4>
+                    <p class="text-muted mb-1">{{ cliente.cedula }}</p>
+                    <div class="badge bg-success mb-3">{{ cliente.estado }}</div>
+                    
+                    <hr>
+                    
+                    <div class="text-start mt-4">
+                        <p><i class="bi bi-telephone me-2 text-primary"></i> {{ cliente.telefono }}</p>
+                        <p><i class="bi bi-geo-alt me-2 text-primary"></i> {{ cliente.direccion|default:"Sin dirección" }}</p>
+                        <p><i class="bi bi-calendar me-2 text-primary"></i> Cliente desde: {{ cliente.fecha_registro|date:"d M Y" }}</p>
+                    </div>
+
+                    <!-- Sugerencia IA -->
+                    {% if mensaje_ia %}
+                    <div class="alert alert-warning mt-3 text-start small">
+                        <strong><i class="bi bi-robot"></i> Sugerencia IA:</strong><br>
+                        Para cobrar, podrías enviar este mensaje:<br><br>
+                        <em>"{{ mensaje_ia }}"</em>
+                        <br>
+                        <a href="https://wa.me/{{ cliente.telefono }}?text={{ mensaje_ia }}" target="_blank" class="btn btn-sm btn-success w-100 mt-2">
+                            <i class="bi bi-whatsapp"></i> Enviar WhatsApp
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Compras y Deudas -->
+        <div class="col-md-8">
+            <h4 class="mb-3">Historial de Compras</h4>
+            
+            {% for venta in ventas %}
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 fw-bold text-primary">{{ venta.producto }}</h6>
+                    {% if venta.estado_actual == 'ATRASADO' %}
+                        <span class="badge bg-danger">Atrasado</span>
+                    {% elif venta.estado_actual == 'COMPLETADO' %}
+                        <span class="badge bg-success">Pagado</span>
+                    {% else %}
+                        <span class="badge bg-info text-dark">Al día</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-4 border-end">
+                            <small class="text-muted">Precio Total</small>
+                            <h5 class="fw-bold">${{ venta.precio_total }}</h5>
+                        </div>
+                        <div class="col-4 border-end">
+                            <small class="text-muted">Pagado</small>
+                            <h5 class="text-success">${{ venta.total_pagado }}</h5>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted">Resta</small>
+                            <h5 class="text-danger">${{ venta.saldo_pendiente }}</h5>
+                        </div>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="progress-{{venta.id}}"></div>
+                    </div>
+                    <script>
+                        // Script simple para llenar la barra de progreso
+                        document.getElementById('progress-{{venta.id}}').style.width = 
+                        "{{ venta.total_pagado }}" / "{{ venta.precio_total }}" * 100 + "%";
+                    </script>
+
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+                        <div>
+                            <strong>Próximo Vencimiento:</strong><br>
+                            {% if venta.proximo_vencimiento %}
+                                {{ venta.proximo_vencimiento }}
+                            {% else %}
+                                <span class="text-success">¡Todo pagado!</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>Cuota aprox:</strong><br>
+                            ${{ venta.monto_cuota }}
+                        </div>
+                        <a href="/admin/gestion/pago/add/?venta={{ venta.id }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-cash-coin"></i> Registrar Pago
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                Este cliente aún no tiene compras registradas.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
