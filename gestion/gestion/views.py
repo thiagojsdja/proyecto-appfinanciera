@@ -102,3 +102,11 @@ def perfil_cliente(request, cliente_id):
         'ventas': ventas,
         'mensaje_ia': mensaje_sugerido
     })
+# ... (todo tu código anterior) ...
+
+from django.http import JsonResponse
+
+# Función para obtener la cuota automáticamente
+def obtener_detalle_venta(request, venta_id):
+    venta = get_object_or_404(Venta, id=venta_id)
+    return JsonResponse({'monto_cuota': venta.monto_cuota})

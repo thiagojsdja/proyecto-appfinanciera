@@ -1,0 +1,26 @@
+/* --- ARREGLO DE CONTRASTE EN BUSCADORES --- */
+
+/* Cuando pasas el mouse por una opción del buscador (Select2) */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #20c997 !important; /* Usamos el verde del botón para resaltar */
+    color: white !important;       /* Letra blanca */
+    font-weight: bold;
+}
+
+/* El color de la opción seleccionada normalmente */
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #ddd;
+    color: #333 !important;
+}
+
+/* --- MEJORAS GENERALES --- */
+
+/* Hacer los inputs un poco más altos para facilitar la escritura */
+input.form-control, select.form-control {
+    min-height: 38px;
+}
+
+/* Quitar el fondo negro predeterminado del sidebar si se bugea */
+.main-sidebar {
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}

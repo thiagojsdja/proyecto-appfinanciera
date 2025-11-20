@@ -11,14 +11,10 @@ class ClienteAdmin(admin.ModelAdmin):
     ordering = ('nombre',)
     list_per_page = 20
 
-    # Formato visual para la deuda (4.200.000 Gs.)
     def deuda_visual(self, obj):
         deuda = obj.calcular_deuda_total()
         return f"{intcomma(int(deuda)).replace(',', '.')} Gs."
     deuda_visual.short_description = "Deuda Total"
-    
-    # Para que se pueda ordenar por deuda (aunque es un cálculo)
-    # deuda_visual.admin_order_field = 'ventas__precio_total' 
 
     def estado_visual(self, obj):
         return obj.estado
@@ -27,7 +23,7 @@ class ClienteAdmin(admin.ModelAdmin):
 # --- CONFIGURACIÓN AUXILIAR (Pagos dentro de Ventas) ---
 class PagoInline(admin.TabularInline):
     model = Pago
-    extra = 0  # No mostrar filas vacías por defecto
+    extra = 0
     classes = ('collapse',)
     autocomplete_fields = ['venta']
     verbose_name = "Pago Realizado"
@@ -42,7 +38,6 @@ class VentaAdmin(admin.ModelAdmin):
     autocomplete_fields = ['cliente'] 
     inlines = [PagoInline] 
 
-    # Organización visual del formulario
     fieldsets = (
         ('📦 Detalles de la Venta', {
             'fields': (('cliente', 'producto'),)
@@ -56,11 +51,9 @@ class VentaAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Conexión del Script de Automatización
     class Media:
         js = ('gestion/js/admin_ventas.js',)
 
-    # Funciones visuales para la lista
     def precio_visual(self, obj):
         return f"{intcomma(int(obj.precio_total)).replace(',', '.')} Gs."
     precio_visual.short_description = "Precio Total"
@@ -73,7 +66,7 @@ class VentaAdmin(admin.ModelAdmin):
         return obj.estado_actual
     estado_calculado.short_description = "Estado"
 
-# --- CONFIGURACIÓN DE PAGOS ---
+# --- CONFIGURACIÓN DE PAGOS (¡AQUÍ ESTÁ EL CAMBIO DEL PASO 4!) ---
 @admin.register(Pago)
 class PagoAdmin(admin.ModelAdmin):
     list_display = ('venta', 'monto_visual', 'fecha_pago', 'metodo')
@@ -81,6 +74,10 @@ class PagoAdmin(admin.ModelAdmin):
     search_fields = ('venta__producto', 'venta__cliente__nombre')
     autocomplete_fields = ['venta'] 
     date_hierarchy = 'fecha_pago'
+
+    # CONECTAMOS EL NUEVO SCRIPT JS
+    class Media:
+        js = ('gestion/js/admin_pagos.js',)
 
     def monto_visual(self, obj):
         return f"{intcomma(int(obj.monto)).replace(',', '.')} Gs."
