@@ -30,6 +30,11 @@ class Cliente(models.Model):
             total += venta.saldo_pendiente
         return total
 
+    # CONFIGURACIÓN VISUAL (NUEVO)
+    class Meta:
+        verbose_name = "Cliente"
+        verbose_name_plural = "📂 Clientes"
+
 class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='ventas')
     producto = models.CharField(max_length=200)
@@ -42,8 +47,9 @@ class Venta(models.Model):
     
     pagada = models.BooleanField(default=False)
 
+    # CAMBIO IMPORTANTE: Mejoramos cómo se ve el nombre de la venta en la lista
     def __str__(self):
-        return f"{self.producto} - {self.cliente.nombre}"
+        return f"{self.producto} - {self.cliente.nombre} (Cuota: {self.monto_cuota:,.0f} Gs)"
 
     @property
     def total_pagado(self):
@@ -85,6 +91,11 @@ class Venta(models.Model):
             
         return "AL_DIA"
 
+    # CONFIGURACIÓN VISUAL (NUEVO)
+    class Meta:
+        verbose_name = "Venta / Crédito"
+        verbose_name_plural = "🛒 Ventas y Créditos"
+
 class Pago(models.Model):
     METODOS = [
         ('EFECTIVO', 'Efectivo'),
@@ -104,3 +115,8 @@ class Pago(models.Model):
         if self.venta.saldo_pendiente <= 0:
             self.venta.pagada = True
             self.venta.save()
+
+    # CONFIGURACIÓN VISUAL (NUEVO)
+    class Meta:
+        verbose_name = "Pago"
+        verbose_name_plural = "💵 Pagos Recibidos"

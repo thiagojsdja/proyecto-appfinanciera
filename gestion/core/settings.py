@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
+    'django.contrib.admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion'
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +128,28 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# --- CONFIGURACIÓN VISUAL (JAZZMIN) ---
+JAZZMIN_SETTINGS = {
+    "site_title": "Gestor de Cobranzas",
+    "site_header": "MiGestor",
+    "site_brand": "💰 MiGestor Pro",
+    "welcome_sign": "Bienvenido al Sistema de Cobranzas",
+    "search_model": "gestion.Cliente",
+    "show_ui_builder": False,
+    
+    # Menú lateral con iconos
+    "icons": {
+        "gestion.Cliente": "fas fa-users",
+        "gestion.Venta": "fas fa-shopping-cart",
+        "gestion.Pago": "fas fa-hand-holding-usd",
+        "auth.User": "fas fa-user-cog",
+        "auth.Group": "fas fa-users-cog",
+    },
+    "order_with_respect_to": ["gestion.Cliente", "gestion.Venta", "gestion.Pago"],
+}
+
+# Tema visual (puedes cambiar 'flatly' por 'darkly', 'journal', 'simplex', etc.)
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly", 
+    "dark_mode_theme": "darkly",
+}
