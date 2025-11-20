@@ -127,28 +127,68 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# ... (código anterior se mantiene igual) ...
+
+# --- CONFIGURACIÓN REGIONAL (ESPAÑOL PARAGUAY) ---
+LANGUAGE_CODE = 'es-py'  # Forzar español de Paraguay
+TIME_ZONE = 'America/Asuncion'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+# Formato de números (Miles con punto)
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = '.'
+DECIMAL_SEPARATOR = ','
+NUMBER_GROUPING = 3
+
 # --- CONFIGURACIÓN VISUAL (JAZZMIN) ---
 JAZZMIN_SETTINGS = {
+    # Títulos y Logos
     "site_title": "Gestor de Cobranzas",
-    "site_header": "MiGestor",
-    "site_brand": "💰 MiGestor Pro",
-    "welcome_sign": "Bienvenido al Sistema de Cobranzas",
-    "search_model": "gestion.Cliente",
-    "show_ui_builder": False,
+    "site_header": "Gestión",
+    "site_brand": "💼 Mi Negocio",
+    "welcome_sign": "Bienvenido al Sistema",
+    "copyright": "MiGestor",
     
-    # Menú lateral con iconos
+    # Buscador general (busca clientes directamente)
+    "search_model": "gestion.Cliente",
+
+    # BOTÓN PARA VOLVER A LA WEB (Punto 2 Solucionado)
+    "topmenu_links": [
+        {"name": "🏠 VOLVER AL DASHBOARD", "url": "dashboard", "permissions": ["auth.view_user"]},
+    ],
+
+    # Menú lateral simplificado
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    
+    # Iconos para que se vea intuitivo
     "icons": {
         "gestion.Cliente": "fas fa-users",
         "gestion.Venta": "fas fa-shopping-cart",
         "gestion.Pago": "fas fa-hand-holding-usd",
-        "auth.User": "fas fa-user-cog",
-        "auth.Group": "fas fa-users-cog",
+        "auth.User": "fas fa-user-shield",
     },
+    
+    # Orden del menú
     "order_with_respect_to": ["gestion.Cliente", "gestion.Venta", "gestion.Pago"],
 }
 
-# Tema visual (puedes cambiar 'flatly' por 'darkly', 'journal', 'simplex', etc.)
+# --- TEMA VISUAL SUAVE (Punto 4 Solucionado) ---
 JAZZMIN_UI_TWEAKS = {
-    "theme": "flatly", 
-    "dark_mode_theme": "darkly",
+    # Usamos 'spacelab' que es colores suaves (gris, azul, blanco)
+    # Opciones buenas: 'spacelab', 'cerulean', 'cosmo', 'yeti'
+    "theme": "spacelab", 
+    
+    # Desactivamos el modo oscuro forzado para evitar contrastes raros
+    #"dark_mode_theme": None, 
+    
+    "navbar": "navbar-light",
+    "sidebar": "sidebar-light-primary", # Barra lateral clara, no negra
 }
+
+# Configuración para la Nube
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+ALLOWED_HOSTS = ['*']
